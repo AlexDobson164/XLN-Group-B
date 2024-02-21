@@ -3,3 +3,34 @@
 <PageTitle>Home</PageTitle>
 
 <iframe src='https://webchat.botframework.com/embed/XLNBotGroupB-bot?s=z645DlF3yHk.rrAh8wFvHKeYA_KxrU3ObNNebI1R3jxYw8q8HQJmWcc'  style='min-width: 400px; width: 100%; min-height: 500px;'></iframe>
+
+<div id="xlnBot"></div>
+
+<script crossorigin="anonymous" src="https://cdn.botframework.com/botframework-webchat/latest/webchat.js"></script>
+<!-- this script was mostly taken from https://github.com/microsoft/BotFramework-WebChat/blob/master/samples/02.branding-styling-and-customization/a.branding-web-chat/index.html -->
+<script>
+      (async function () {
+        // In this demo, we are using Direct Line token from MockBot.
+        // Your client code must provide either a secret or a token to talk to your bot.
+        // Tokens are more secure. To learn about the differences between secrets and tokens
+        // and to understand the risks associated with using secrets, visit https://docs.microsoft.com/en-us/azure/bot-service/rest-api/bot-framework-rest-direct-line-3-0-authentication?view=azure-bot-service-4.0
+
+        const res = await fetch('https://webchat-mockbot.azurewebsites.net/directline/token', { method: 'POST' });
+        const { token } = await res.json();
+
+        // You can modify the style set by providing a limited set of style options
+        const styleOptions = {
+          hideUploadButton: true;
+        };
+
+        window.WebChat.renderWebChat(
+          {
+            directLine: window.WebChat.createDirectLine({ token }),
+            styleOptions
+          },
+          document.getElementById('xlnBot')
+        );
+
+        document.querySelector('#webchat > *').focus();
+      })().catch(err => console.error(err));
+    </script>
