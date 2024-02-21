@@ -31,3 +31,7 @@ h1:focus {
 .page-background-class{
     background-color: aliceblue;
 }
+
+iframe{
+    height: 80vh;
+}
