@@ -27,3 +27,11 @@ h1:focus {
 .darker-border-checkbox.form-check-input {
     border-color: #929292;
 }
+
+.page-background-class{
+    background-color: aliceblue;
+}
+
+iframe{
+    height: 80vh;
+}
