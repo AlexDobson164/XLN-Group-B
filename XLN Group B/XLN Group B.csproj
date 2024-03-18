@@ -8,4 +8,10 @@
     <AssemblyName>$(AssemblyName.Replace(' ', '_'))</AssemblyName>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Azure.core" Version="1.38.0" />
+    <PackageReference Include="microsoft.bot.builder" Version="4.22.2" />
+    <PackageReference Include="microsoft.bot.connector.directline" Version="3.0.2" />
+  </ItemGroup>
+
 </Project>
