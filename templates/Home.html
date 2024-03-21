@@ -1,0 +1,64 @@
+{{ template "header.html" .}}
+
+<div class="container">
+    <div class="row justify-content-center pt-5 pb-5">
+        <div class="col-md-5 rounded shadow" style="background-color: white;">
+            <div class="content p-3">
+                <div class="row pt-5">
+                    <img src="assets/call_center_agent.png">
+                </div>
+                <div class="row pt-5">
+                    <h1><strong>Welcome to XLN Support</strong></h1>
+                    <p style="font-size: 22px">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                        Sed efficitur libero et orci vulputate gravida. In eget pulvinar ante.
+                        Nunc fringilla nisi vitae dui euismod, non pretium est mollis. Nulla.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-1"></div> <!--maintains spacing between -->
+
+        <div class="col-md-5 rounded shadow overflow-hidden h-75" style="background: white;">
+            <script crossorigin="anonymous"
+                src="https://cdn.botframework.com/botframework-webchat/latest/webchat.js"></script>
+            <style>
+                html,
+                body {
+                    height: 100%;
+                }
+
+                body {
+                    margin: 0;
+                }
+
+                #webchat {
+                    height: 50vh;
+                    width: 100%;
+                }
+                #webchat img {
+                    height: 250px;
+                    width: 250px;
+                }
+            </style>
+            <div id="webchat" role="main" style=""></div>
+            <script>
+                window.WebChat.renderWebChat(
+                    {
+                        directLine: window.WebChat.createDirectLine({
+                            token: '7Y0xAiT3CWM.mKNBL5XyLw3TloHP2RDvgJlrvkAcpyvVJZVJr9rxzlE'
+                        }),
+                        styleOptions: {
+                            hideUploadButton: true
+                        },
+                        userID: 'YOUR_USER_ID',
+                        username: 'Web Chat User',
+                        locale: 'en-US'
+                    },
+                    document.getElementById('webchat')
+                );
+            </script>
+        </div>
+    </div>
+</div>
