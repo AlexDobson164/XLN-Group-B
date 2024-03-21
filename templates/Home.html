@@ -1,5 +1,6 @@
 {{ template "header.html" .}}
 
+<body>
 <div class="container">
     <div class="row justify-content-center pt-5 pb-5">
         <div class="col-md-5 rounded shadow" style="background-color: white;">
@@ -42,7 +43,7 @@
                     width: 250px;
                 }
             </style>
-            <div id="webchat" role="main" style=""></div>
+            <div id="webchat" class="chatContainer" role="main" style=""></div>
             <script>
                 window.WebChat.renderWebChat(
                     {
@@ -59,6 +60,43 @@
                     document.getElementById('webchat')
                 );
             </script>
+            <script>
+            // Function to extract text from an element
+            function getTextFromElement(element) {
+              return element.textContent || element.innerText;
+            }
+
+            // Callback function to handle mutations
+            function handleMutation(mutationsList, observer) {
+                // Get elements by class name
+                const elements = document.getElementsByClassName("webchat__text-content__markdown");
+
+                // Convert HTMLCollection to an array and iterate over it
+                let A = Array.from(elements)
+                let L = A.length;
+                if (L > 0) {
+                    if (L != num) {
+                        for (i=Num; i < L; i++) {
+                            console.log(x);
+                        }
+                    }
+                }
+            }
+            var Num = 0;
+            // Select the target node
+            const targetNode = document.body;
+
+            // Options for the observer (which mutations to observe)
+            const config = { childList: true, subtree: true };
+
+            // Create a MutationObserver instance linked to the callback function
+            const observer = new MutationObserver(handleMutation);
+
+            // Start observing the target node for configured mutations
+            observer.observe(targetNode, config);
+            </script>
+
         </div>
     </div>
 </div>
+</body>
