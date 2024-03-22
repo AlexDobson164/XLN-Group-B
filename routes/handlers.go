@@ -2,6 +2,9 @@ package routes
 
 import (
 	"APR/db"
+	"encoding/json"
+	"io"
+	"log"
 	"math/rand"
 	"net/http"
 	"strconv"
@@ -14,21 +17,42 @@ func ShowHomePage(c *gin.Context) {
 	// c.Set("Client", token)
 	ID, err := db.InsertChatLogEntry()
 	if err != nil {
+		log.Println(err)
 		c.AbortWithStatus(http.StatusForbidden)
 	}
-	c.Set("ID", ID)
+	c.SetCookie("ID", strconv.Itoa(ID), 3600, "", "", false, true)
 	Render(c, gin.H{
 		"title": "Home",
 	}, "Home.html")
 }
 
-func BotConversation(c *gin.Context) {
-	// token, e := c.Get("Client")
-	// if e != true {
-	// 	log.Fatal("Client ctx not found")
-	// 	return
-	// }
+type T struct {
+	Message string `json:"Message"`
+	IsBot   bool   `json:"IsBot"`
+}
 
+func BotConversation(c *gin.Context) {
+	ID, e := c.Cookie("ID")
+	if e != nil {
+		log.Print(e)
+		return
+	}
+	jsonData, err := io.ReadAll(c.Request.Body)
+	if err != nil {
+		log.Print(err)
+		return
+	}
+	a := new(T)
+	json.Unmarshal(jsonData, a)
+	log.Print(string(jsonData))
+	log.Print(a)
+	log.Print(a.Message)
+	NID, err := strconv.Atoi(ID)
+	if err != nil {
+		log.Println(err)
+	}
+	db.InsertBotConversation(NID, a.Message, true)
+	c.Status(200)
 }
 
 // func showPersonalDetails(c *gin.Context) {

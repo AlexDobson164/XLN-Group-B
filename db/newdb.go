@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"strconv"
 	"time"
 
 	_ "github.com/microsoft/go-mssqldb"
@@ -38,7 +39,7 @@ func init() {
 }
 
 func InsertChatLogEntry() (int, error) {
-	result, err := db.ExecContext(context.Background(), "INSERT INTO [dbo].[ChatLog] (firstMessageTime) VALUES (?); SELECT @@IDENTITY", int32(time.Now().Unix()))
+	result, err := db.Exec("INSERT INTO [dbo].[ChatLog] (firstMessageTime) VALUES (" + strconv.Itoa(int(time.Now().Unix())) + ");")
 	if err != nil {
 		log.Print(err)
 		return 0, err
@@ -48,18 +49,66 @@ func InsertChatLogEntry() (int, error) {
 		log.Print(err)
 		return 0, err
 	}
-	lastInsertID, err := result.LastInsertId()
-	if err != nil {
-		log.Print(err)
-		return 0, err
-	}
 	if rows != 1 {
 		log.Fatalf("expected to affect 1 row, affected %d", rows)
 		return 0, errors.New("Expected 1 row to be affected")
 	}
-	return int(lastInsertID), err
+	log.Println("According to all known laws in aviation")
+	var ID int
+	row, err := db.Query("SELECT MAX(ChatID) FROM [dbo].[ChatLog]")
+	for row.Next() {
+		err = row.Scan(&ID)
+		if err != nil {
+			log.Println(err)
+			return 0, err
+		}
+		fmt.Println(ID)
+		err = row.Err()
+		if err != nil {
+			log.Println(err)
+		}
+		if err != nil {
+			log.Print(err)
+			return 0, err
+		}
+	}
+	return ID, err
 }
 
-func InsertBotConversation(BotSaid string) {
-	db.Exec("INSERT INTO [dbo].[ChatEntries] (chatID, entryTime, interaction, isBot) VALUES ({chatID}, {time}, {interaction}, 1))")
+func InsertBotConversation(ChatID int, Message string, IsBot bool) error {
+	if IsBot {
+		result, err := db.Exec(fmt.Sprintf("INSERT INTO [dbo].[ChatEntries] (chatID, entryTime, interaction, isBot) VALUES (%d, %d, '%s', 1)", ChatID, time.Now().Unix(), Message))
+		if err != nil {
+			log.Print(err)
+			return err
+		}
+		rows, err := result.RowsAffected()
+		if err != nil {
+			log.Print(err)
+			return err
+		}
+		if rows != 1 {
+			log.Fatalf("expected to affect 1 row, affected %d", rows)
+			return errors.New("Expected 1 row to be affected")
+		}
+		log.Println("Uploaded to DB")
+		return err
+	} else {
+		result, err := db.Exec(fmt.Sprintf("INSERT INTO [dbo].[ChatEntries] (chatID, entryTime, interaction, isBot) VALUES (%d, %d, '%s', 0)", ChatID, time.Now().Unix(), Message))
+		if err != nil {
+			log.Print(err)
+			return err
+		}
+		rows, err := result.RowsAffected()
+		if err != nil {
+			log.Print(err)
+			return err
+		}
+		if rows != 1 {
+			log.Fatalf("expected to affect 1 row, affected %d", rows)
+			return errors.New("Expected 1 row to be affected")
+		}
+		log.Println("Uploaded to DB")
+		return err
+	}
 }

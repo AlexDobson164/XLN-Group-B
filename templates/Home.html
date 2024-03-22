@@ -39,8 +39,12 @@
                     width: 100%;
                 }
                 #webchat img {
-                    height: 250px;
-                    width: 250px;
+                    height: 45%;
+                    width: 45%;
+                }
+                #webchat .webchat__render-markdown__external-link-icon {
+                    height: 30px;
+                    width: 30px;
                 }
             </style>
             <div id="webchat" class="chatContainer" role="main" style=""></div>
@@ -61,15 +65,11 @@
                 );
             </script>
             <script>
-            // Function to extract text from an element
-            function getTextFromElement(element) {
-              return element.textContent || element.innerText;
-            }
-
             // Callback function to handle mutations
             function handleMutation(mutationsList, observer) {
                 // Get elements by class name
                 const elements = document.getElementsByClassName("webchat__text-content__markdown");
+                const elements2 = document.getElementsByClassName("webchat__text-content--is-plain");
 
                 // Convert HTMLCollection to an array and iterate over it
                 let A = Array.from(elements)
@@ -79,21 +79,55 @@
                         for (i=Num; i < L; i++) {
                             console.log(A[i]);
                             console.log(elements[i].textContent)
+                            fetch("http://127.0.0.1:8080/bot-conversation", {
+                                method: "POST",
+                                body: JSON.stringify({
+                                    Message: elements[i].textContent,
+                                    IsBot: true,
+                                }),
+                            headers: {
+                                "Content-type": "application/json; charset=UTF-8"
+                            }
+                        })
+                        .then((response) => response.json())
+                        .then((json) => console.log(json));
                         }
                         Num = L;
                     }
                 }
+                // Convert HTMLCollection to an array and iterate over it
+                let B = Array.from(elements2)
+                let M = A.length;
+                if (M > 0) {
+                    if (M != Num2) {
+                        for (i=Num2; i < M; i++) {
+                            console.log(B[i]);
+                            console.log(elements2[i].textContent)
+                            fetch("http://127.0.0.1:8080/bot-conversation", {
+                                method: "POST",
+                                body: JSON.stringify({
+                                    Message: elements2[i].textContent,
+                                    IsBot: false,
+                                }),
+                            headers: {
+                                "Content-type": "application/json; charset=UTF-8"
+                            }
+                        })
+                        .then((response) => response.json())
+                        .then((json) => console.log(json));
+                        }
+                        Num2 = M;
+                    }
+                }
             }
             var Num = 0;
+            var Num2 = 0;
             // Select the target node
             const targetNode = document.body;
-
             // Options for the observer (which mutations to observe)
             const config = { childList: true, subtree: true };
-
             // Create a MutationObserver instance linked to the callback function
             const observer = new MutationObserver(handleMutation);
-
             // Start observing the target node for configured mutations
             observer.observe(targetNode, config);
             </script>
