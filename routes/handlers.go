@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"APR/db"
 	"math/rand"
 	"net/http"
 	"strconv"
@@ -8,15 +9,26 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func showLoginPage(c *gin.Context) {
-	Render(c, gin.H{
-		"title": "Login",
-	}, "login.html")
-}
 func ShowHomePage(c *gin.Context) {
+	// token := generateSessionToken()
+	// c.Set("Client", token)
+	ID, err := db.InsertChatLogEntry()
+	if err != nil {
+		c.AbortWithStatus(http.StatusForbidden)
+	}
+	c.Set("ID", ID)
 	Render(c, gin.H{
 		"title": "Home",
 	}, "Home.html")
+}
+
+func BotConversation(c *gin.Context) {
+	// token, e := c.Get("Client")
+	// if e != true {
+	// 	log.Fatal("Client ctx not found")
+	// 	return
+	// }
+
 }
 
 // func showPersonalDetails(c *gin.Context) {
@@ -110,13 +122,9 @@ func generateSessionToken() string {
 // 	c.Redirect(http.StatusTemporaryRedirect, "/")     // Redirect to the home page
 // }
 
-func showRegistrationPage(c *gin.Context) {
-	Render(c, gin.H{"title": "Register"}, "register.html")
-}
-
-func ShowIndexPage(c *gin.Context) {
-	Render(c, gin.H{"title": "Home Page"}, "index.html")
-}
+// func ShowIndexPage(c *gin.Context) {
+// 	Render(c, gin.H{"title": "Home Page"}, "index.html")
+// }
 
 // func register(c *gin.Context) {
 // 	// Obtain the form values by POST
@@ -149,15 +157,3 @@ func ShowIndexPage(c *gin.Context) {
 // 		})
 // 	}
 // }
-
-func ShowNutritionPage(c *gin.Context) {
-	c.HTML(http.StatusBadRequest, "nutrition.html", nil)
-}
-
-func ShowPinPage(c *gin.Context) {
-	c.HTML(http.StatusBadRequest, "pin.html", nil)
-}
-
-func ShowCoachingPage(c *gin.Context) {
-	c.HTML(http.StatusBadRequest, "coaching.html", nil)
-}
