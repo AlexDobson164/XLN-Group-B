@@ -6,11 +6,10 @@ import (
 
 func InitialiseRoutes(router *gin.Engine) {
 	// router.Use(auth.SetUserStatus())
-	router.GET("/", ShowIndexPage) // Handle the index route
-	router.GET("/nutrition", ShowNutritionPage)
-	router.GET("/pin", ShowPinPage)
-	router.GET("/coaching", ShowCoachingPage)
+	router.GET("/", ShowHomePage) // Handle the index route
 	router.GET("/home", ShowHomePage)
+	router.POST("/bot-conversation", BotConversation)
+
 	// logRoutes := router.Group("/personal-log") // log group
 	// {
 	// 	logRoutes.GET("/view", auth.EnsureLoggedIn(), ShowLogs)

@@ -1,6 +1,10 @@
 package routes
 
 import (
+	"APR/db"
+	"encoding/json"
+	"io"
+	"log"
 	"math/rand"
 	"net/http"
 	"strconv"
@@ -8,15 +12,47 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func showLoginPage(c *gin.Context) {
-	Render(c, gin.H{
-		"title": "Login",
-	}, "login.html")
-}
 func ShowHomePage(c *gin.Context) {
+	// token := generateSessionToken()
+	// c.Set("Client", token)
+	ID, err := db.InsertChatLogEntry()
+	if err != nil {
+		log.Println(err)
+		c.AbortWithStatus(http.StatusForbidden)
+	}
+	c.SetCookie("ID", strconv.Itoa(ID), 3600, "", "", false, true)
 	Render(c, gin.H{
 		"title": "Home",
 	}, "Home.html")
+}
+
+type T struct {
+	Message string `json:"Message"`
+	IsBot   bool   `json:"IsBot"`
+}
+
+func BotConversation(c *gin.Context) {
+	ID, e := c.Cookie("ID")
+	if e != nil {
+		log.Print(e)
+		return
+	}
+	jsonData, err := io.ReadAll(c.Request.Body)
+	if err != nil {
+		log.Print(err)
+		return
+	}
+	a := new(T)
+	json.Unmarshal(jsonData, a)
+	log.Print(string(jsonData))
+	log.Print(a)
+	log.Print(a.Message)
+	NID, err := strconv.Atoi(ID)
+	if err != nil {
+		log.Println(err)
+	}
+	db.InsertBotConversation(NID, a.Message, true)
+	c.Status(200)
 }
 
 // func showPersonalDetails(c *gin.Context) {
@@ -110,13 +146,9 @@ func generateSessionToken() string {
 // 	c.Redirect(http.StatusTemporaryRedirect, "/")     // Redirect to the home page
 // }
 
-func showRegistrationPage(c *gin.Context) {
-	Render(c, gin.H{"title": "Register"}, "register.html")
-}
-
-func ShowIndexPage(c *gin.Context) {
-	Render(c, gin.H{"title": "Home Page"}, "index.html")
-}
+// func ShowIndexPage(c *gin.Context) {
+// 	Render(c, gin.H{"title": "Home Page"}, "index.html")
+// }
 
 // func register(c *gin.Context) {
 // 	// Obtain the form values by POST
@@ -149,15 +181,3 @@ func ShowIndexPage(c *gin.Context) {
 // 		})
 // 	}
 // }
-
-func ShowNutritionPage(c *gin.Context) {
-	c.HTML(http.StatusBadRequest, "nutrition.html", nil)
-}
-
-func ShowPinPage(c *gin.Context) {
-	c.HTML(http.StatusBadRequest, "pin.html", nil)
-}
-
-func ShowCoachingPage(c *gin.Context) {
-	c.HTML(http.StatusBadRequest, "coaching.html", nil)
-}
