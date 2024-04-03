@@ -51,7 +51,7 @@ func BotConversation(c *gin.Context) {
 	if err != nil {
 		log.Println(err)
 	}
-	db.InsertBotConversation(NID, a.Message, true)
+	db.InsertBotConversation(NID, a.Message, a.IsBot)
 	c.Status(200)
 }
 

@@ -34,7 +34,7 @@ func init() {
 	if err != nil {
 		log.Fatal(err.Error())
 	}
-	db.Query("")
+	// db.Query("")
 	fmt.Printf("Connected to DB!")
 }
 
